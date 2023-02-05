@@ -30,7 +30,7 @@ func main() {
 	logger.Info("listener started")
 
 	grpcServer := grpc.NewServer()
-	fw := file.NewWriter(logger)
+	fw := file.NewWriter(logger, file.GetDirName, file.GetFileName)
 
 	pb.RegisterEventServiceServer(grpcServer, &handler.EventAPI{Storage: fw, Logger: logger})
 	reflection.Register(grpcServer)

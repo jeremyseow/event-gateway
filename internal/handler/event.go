@@ -2,13 +2,10 @@ package handler
 
 import (
 	"context"
-	"fmt"
-	"time"
 
 	"github.com/jeremyseow/event-gateway/internal/storage"
 	"github.com/jeremyseow/event-gateway/pb"
 
-	"github.com/google/uuid"
 	"go.uber.org/zap"
 	"google.golang.org/protobuf/proto"
 )
@@ -32,11 +29,7 @@ func (eventAPI *EventAPI) SendEvent(_ context.Context, request *pb.EventRequest)
 		return &pb.EventResponse{Result: "Failed"}, err
 	}
 
-	currTime := time.Now().UTC()
-	uuid := uuid.New().String()
-	filepath := fmt.Sprintf("output/year=%d/month=%d/day=%d/hour=%d", currTime.Year(), currTime.Month(), currTime.Day(), currTime.Hour())
-	filename := fmt.Sprintf("%s-%s.txt", "events", uuid)
-	err = eventAPI.Storage.Write(filepath, filename, bytes)
+	_, err = eventAPI.Storage.Write(bytes)
 	if err != nil {
 		eventAPI.Logger.Error("error when writing events", zap.String("logTag", logTag), zap.String("error", err.Error()))
 		return &pb.EventResponse{Result: "Failed"}, err
