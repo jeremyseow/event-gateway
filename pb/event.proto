@@ -1,0 +1,22 @@
+syntax = "proto3";
+
+import "google/protobuf/struct.proto";
+
+option go_package = "./pb";
+
+service EventService {
+    rpc SendEvent(EventRequest) returns (EventResponse);
+}
+
+message EventRequest {
+    repeated Event events = 1;
+}
+
+message Event {
+  string name = 1;
+  google.protobuf.Struct attributes = 2;
+}
+
+message EventResponse {
+  string result = 1;
+}

@@ -1,0 +1,8 @@
+{
+    "env": "local",
+    "hostConfig": {
+        "hostName": "localhost",
+        "grpcPort": ":8082",
+        "debugPort": ":8085"
+    }
+}
