@@ -1,8 +1,12 @@
 package config
 
 import (
-	"encoding/json"
-	"io/ioutil"
+	"github.com/spf13/viper"
+)
+
+const (
+	// bootstrap paths
+	configBsPath = "bootstrap/config_dev.json"
 )
 
 type Config struct {
@@ -18,15 +22,19 @@ type HostConfig struct {
 
 var Conf = &Config{}
 
-func init() {
-	file, err := ioutil.ReadFile("config/config_dev.json")
-
+func InitConfig() *viper.Viper {
+	viper.SetConfigFile(configBsPath)
+	viper.AutomaticEnv() // viper will automatically override values that it has read from config file with the values of the corresponding environment variables if they exist
+	// err := viper.BindEnv("env", "ENV")
+	// if err != nil {
+	// 	panic(err)
+	// }
+	err := viper.ReadInConfig()
 	if err != nil {
 		panic(err)
 	}
 
-	err = json.Unmarshal([]byte(file), &Conf)
-	if err != nil {
-		panic(err)
-	}
+	// fmt.Println(viper.GetString("env"))
+
+	return viper.GetViper()
 }

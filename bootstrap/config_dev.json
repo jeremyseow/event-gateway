@@ -1,0 +1,12 @@
+{
+    "env": "local",
+    "serviceName": "event-gateway",
+    "packageName": "github.com/jeremyseow/event-gateway",
+    "serviceVersion": "0.1.0",
+    "hostConfig": {
+        "hostName": "localhost",
+        "httpPort": ":8081",
+        "grpcPort": ":8082",
+        "debugPort": ":8085"
+    }
+}
