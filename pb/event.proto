@@ -1,6 +1,7 @@
 syntax = "proto3";
 
-import "google/protobuf/struct.proto";
+// import "google/protobuf/struct.proto";
+import "google/protobuf/any.proto";
 
 option go_package = "./pb";
 
@@ -14,7 +15,15 @@ message EventRequest {
 
 message Event {
   string name = 1;
-  google.protobuf.Struct attributes = 2;
+  int64  eventTime = 2;
+  repeated Entity entities = 3;
+}
+
+message Entity {
+  string schema = 1;
+  string version = 2;
+  // google.protobuf.Struct parameters = 3;
+  map<string, google.protobuf.Any> parameters = 3;
 }
 
 message EventResponse {

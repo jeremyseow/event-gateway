@@ -8,10 +8,13 @@ import (
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/jeremyseow/event-gateway/config"
-	"github.com/jeremyseow/event-gateway/internal/handler"
-	"github.com/jeremyseow/event-gateway/internal/storage/file"
-	"github.com/jeremyseow/event-gateway/internal/utils"
 	"github.com/jeremyseow/event-gateway/pb"
+	"github.com/jeremyseow/event-gateway/processor/schema"
+	grpcHandler "github.com/jeremyseow/event-gateway/server/grpc/handler"
+	httpHandler "github.com/jeremyseow/event-gateway/server/http/handler"
+	"github.com/jeremyseow/event-gateway/server/http/router"
+	"github.com/jeremyseow/event-gateway/storage/file"
+	"github.com/jeremyseow/event-gateway/utils"
 
 	"go.uber.org/zap"
 	"google.golang.org/grpc"
@@ -38,7 +41,7 @@ func main() {
 	grpcServer := grpc.NewServer()
 	fw := file.NewWriter(allUtilityClients, file.GetDirName, file.GetFileName)
 
-	pb.RegisterEventServiceServer(grpcServer, handler.NewEventAPI(fw, allUtilityClients))
+	pb.RegisterEventServiceServer(grpcServer, grpcHandler.NewEventAPI(fw, allUtilityClients))
 	reflection.Register(grpcServer)
 
 	go func() {
@@ -49,6 +52,12 @@ func main() {
 
 	// setting up http server
 	app := fiber.New()
+
+	// configure all APIs
+	validator := schema.NewValidator(allUtilityClients.Logger)
+	allAPIs := httpHandler.NewAllAPIs(allUtilityClients, validator)
+	router.SetupRoutes(app, allAPIs)
+
 	go func() {
 		if err := app.Listen(conf.GetString("hostConfig.httpPort")); err != nil {
 			panic(err)

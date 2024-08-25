@@ -8,7 +8,7 @@ import (
 	"time"
 
 	"github.com/google/uuid"
-	"github.com/jeremyseow/event-gateway/internal/utils"
+	"github.com/jeremyseow/event-gateway/utils"
 	"go.uber.org/zap"
 )
 

@@ -3,9 +3,10 @@ package handler
 import (
 	"context"
 
-	"github.com/jeremyseow/event-gateway/internal/storage"
-	"github.com/jeremyseow/event-gateway/internal/utils"
 	"github.com/jeremyseow/event-gateway/pb"
+	"github.com/jeremyseow/event-gateway/processor/schema"
+	"github.com/jeremyseow/event-gateway/storage"
+	"github.com/jeremyseow/event-gateway/utils"
 
 	"go.uber.org/zap"
 	"google.golang.org/protobuf/proto"
@@ -17,12 +18,14 @@ const (
 
 type EventAPI struct {
 	pb.UnimplementedEventServiceServer
-	Storage storage.Storage
-	Logger  *zap.Logger
+	SchemaValidator *schema.Validator
+	Storage         storage.Storage
+	Logger          *zap.Logger
 }
 
 func NewEventAPI(writer storage.Storage, allUtilityClients *utils.AllUtilityClients) *EventAPI {
-	return &EventAPI{Storage: writer, Logger: allUtilityClients.Logger}
+	validator := schema.NewValidator(allUtilityClients.Logger)
+	return &EventAPI{SchemaValidator: validator, Storage: writer, Logger: allUtilityClients.Logger}
 }
 
 func (eventAPI *EventAPI) SendEvent(_ context.Context, request *pb.EventRequest) (*pb.EventResponse, error) {
