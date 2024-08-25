@@ -9,3 +9,6 @@ proto_gen:
 
 http_load_test:
 	k6 run .\loadtest\http.js
+
+run_tests:
+	go test -v ./...
